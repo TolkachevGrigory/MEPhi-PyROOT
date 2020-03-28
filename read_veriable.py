@@ -169,52 +169,6 @@ h_pt_data = rew(f2, 'data')
 
 h_pt_mc_wmu = rew(f3, 'wmu')
 
-
-# In[7]:
-
-
-c2 = ROOT.TCanvas() 
-c2.Divide(1, 2)
-c2.SetLogy()
-ROOT.gStyle.SetOptStat(0)
-c2.cd()
-#gPad = c1.cd(1)
-#gPad.SetLogy()
-
-
-h_pt_mc_wtau.SetLineColor(ROOT.kRed)
-h_pt_mc_wmu.SetLineColor(ROOT.kYellow)
-
-h_pt_mc_wmu.SetTitle("mc_wmu")
-h_pt_data.SetTitle('data')
-h_pt_mc_wtau.SetTitle("mc_wtau")
-
-h_pt_data.Draw("hist ")
-h_pt_mc_wtau.Draw("hist same")
-h_pt_mc_wmu.Draw("hist same")
-
-
-
-ROOT.gPad.BuildLegend(1.0,0.8,0.8,0.5,"","")
-h_add = ROOT.TH1D("add","",  50,0, 120)
-h_divide = ROOT.TH1D("divide","",  50,0, 120)
-h_add.Add(h_pt_mc_wtau, h_pt_mc_wmu, 1, 1)
-h_divide.Divide(h_pt_data, h_add, 1, 1)
-c2.cd(2)
-h_divide.Draw("E1")
-c2.Update()
-c2.Draw()
-
-
-# In[ ]:
-
-
-
-
-
-# In[11]:
-
-
 c3 = ROOT.TCanvas() 
 c3.Divide(1, 2)
 #c1.SetLogy()
