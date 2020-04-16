@@ -70,9 +70,13 @@ class DataSet:
                 lumi2015 = 3219.56  # pb-1
                         
                 df = ROOT.RDataFrame(self.treeName, self.path +'/'+ str(file))
-                      
-                    
-                h = df.Define('v', var.command)                      .Define('w1', str(kf*lumi2015/bin_8))                      .Define('w2', 'weight_mc*NOMINAL_pileup_combined_weight*cross_section*filter_efficiency*kfactor')                      .Define('w', 'w1*w2')                      .Histo1D(("%s"%(var.name), "%s"%(self.name), var.nbins, var.low, var.high), 'v', 'w')
+                weight = '(weight_mc*(cross_section*filter_efficiency*kfactor))*(((((((((NOMINAL_pileup_combined_weight)*(lep_0_NOMINAL_MuEffSF_TTVA))*(lep_0_NOMINAL_MuEffSF_IsoFCTight))*(jet_NOMINAL_global_effSF_MV2c10*jet_NOMINAL_global_ineffSF_MV2c10))*(jet_NOMINAL_central_jets_global_effSF_JVT*jet_NOMINAL_central_jets_global_ineffSF_JVT))*(lep_0_NOMINAL_MuEffSF_Reco_QualMedium))*(1))*((lep_0_NOMINAL_MuEffSF_HLT_mu20_iloose_L1MU15_OR_HLT_mu50_QualMedium_IsoNone)))*(jet_NOMINAL_forward_jets_global_effSF_JVT*jet_NOMINAL_forward_jets_global_ineffSF_JVT))'      
+               # oldweight = 'weight_mc*NOMINAL_pileup_combined_weight*cross_section*filter_efficiency*kfactor'
+                h = df.Define('v', var.command)                      
+                      .Define('w1', str(kf*lumi2015/bin_8))                     
+                      .Define('w2', weight)
+                      .Define('w', 'w1*w2')
+                      .Histo1D(("%s"%(var.name), "%s"%(self.name), var.nbins, var.low, var.high), 'v', 'w')
                 #if 'dphi' in var.varname:
                 #    h = df.Define('v', 'if(fabs(lepmet_dphi) > 3.1415){ double_t dphi = 2*3.1415 - fabs(lepmet_dphi);}else{ double_t dphi  = lepmet_dphi;}return dphi;')
                     
@@ -83,7 +87,8 @@ class DataSet:
                 
             else:
                 df = ROOT.RDataFrame(self.treeName, self.path +'/'+ str(file))
-                h = df.Define('v', var.command)                      .Histo1D(("%s"%(var.name), "%s"%(self.name), var.nbins, var.low, var.high),'v')
+                h = df.Define('v', var.command)  
+                      .Histo1D(("%s"%(var.name), "%s"%(self.name), var.nbins, var.low, var.high),'v')
                         
             if k == 0:
                 hClone = h.Clone()
