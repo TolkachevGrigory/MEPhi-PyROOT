@@ -273,7 +273,21 @@ class Plotter:
         c3.SaveAs('fff.pdf')
         c3.Draw()
         return c3
-    
+
+dsidDict_v9 = {
+    # PowhegPythia8EvtGen
+    'Wmu': [361101, 361104],
+    'We': [361100, 361103],
+    'Wt': [361102, 361105],
+    'DYee': [361106],
+    'DYmm': [361107],
+    'DYtt': [361108],
+    'Top': [410013, 410014, 410470] + [410644, 410645, 410646],  # [410025]+[410647], is not in DBs
+    'Diboson': [363356, 363358, 363359, 363360, 363489] + [364250, 364253, 364254, 364255],
+    'QCD': [],
+    'Data': ['periodD','periodE','periodF','periodG','periodH','periodJ' ],
+}
+
     
 #NEW FUNCTION 
 dirmc = '/eos/user/s/smwbr/dponomar/WTauData/v10s04/year15/filtered/SR/nom_mu'
