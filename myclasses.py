@@ -273,9 +273,79 @@ class Plotter:
         c3.SaveAs('fff.pdf')
         c3.Draw()
         return c3
+    
+    
+#NEW FUNCTION 
+dirmc = '/eos/user/s/smwbr/dponomar/WTauData/v10s04/year15/filtered/SR/nom_mu'
+dirdata = '/eos/user/s/smwbr/dponomar/WTauData/v10s04/year15/filtered/SR/data_mu'
+listOfFilesmc = os.listdir(dirmc)
+listOfFilesdata = os.listdir(dirdata)
+def ghst(channel, var, dataset):
+    
+   
+    if 'Data' in str(channel):
+        listOfFiles=listOfFilesdata
+        dirname = dirdata
+    else:
+        listOfFiles=listOfFilesmc
+        dirname = dirmc
+        
+    dirlist = dsidDict_v9.get(channel)
+    k = 0
+    for dsid in dirlist:
+        for directory in listOfFiles:
+            if str(dsid) in directory:
+                dataset.findFilesByPath(dirname +'/'+directory)
 
+                h = dataset.getHistogram(var)
+                
+        if k == 0:
+            hClone = h.Clone()
+            hClone.SetDirectory(0)
+            k+=1
+            print(k)
+        else:
+            hClone.Add(h)
+        print(k)
+    return hClone 
 
 # In[ ]:
+
+zmumu = '/eos/user/s/smwbr/dponomar/WTauData/v10s04/year15/filtered/SR/nom_mu/user.dponomar.v10s04.mc16_13TeV.361107.PoPy8_Zmumu.M4.e3601_s3126_r9364_r9315_p3731.nom_mu_SM'
+ztt = '/eos/user/s/smwbr/dponomar/WTauData/v10s04/year15/filtered/SR/nom_mu/user.dponomar.v10s04.mc16_13TeV.361108.PoPy8_Ztt.M4.e3601_s3126_r9364_r9315_p3729.nom_mu_SM'
+
+Top = DataSet('Top')
+Diboson = DataSet('Diboson')
+Wmu = DataSet('W#rightarrow#mu#nu')
+Tau = DataSet('W#rightarrow#tau#nu')
+Data = DataSet('data')
+Zmumu = DataSet('Z#rightarrow#mu#mu')
+Ztt = DataSet('Z#rightarrow#tau#tau ')
+Data.isData = True
+
+
+
+Zmumu.findFilesByPath(zmumu)
+Ztt.findFilesByPath(ztt)
+
+var = Variable('lepmet_dphi', 16, 0, math.pi)
+
+
+h_data = ghst('Data',var,Data)
+h_top = ghst('Top',var,Top)
+h_diboson = ghst('Diboson',var,Diboson)
+h_wmu = ghst('Wmu',var,Wmu)
+h_tau = ghst('Wt',var,Tau)
+
+h_zmumu = Zmumu.getHistogram(var)
+h_ztt = Ztt.getHistogram(var)
+h_mc_list = [h_top, h_diboson, h_ztt, h_tau, h_zmumu, h_wmu]
+
+plotdphi = Plotter(1800000000, 0.5, 1.5)
+plotdphi.SetTitleX = 'd#phi(lep-MET)'
+plotdphi.SetTitleY = 'Evants/0.197'
+plotdphi.painter(h_data,h_mc_list)
+
 
 
 dir_top = '/eos/user/g/gtolkach/NEWDATA/top'
