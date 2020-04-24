@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[66]:
+# In[3]:
 
 
 import ROOT
@@ -14,7 +14,7 @@ from ROOT import gStyle
 from ROOT import gPad
 
 
-# In[141]:
+# In[4]:
 
 
 class Variable:
@@ -32,7 +32,7 @@ class Variable:
             self.command = self.name
 
 
-# In[130]:
+# In[30]:
 
 
 class DataSet:
@@ -49,68 +49,96 @@ class DataSet:
         self.treeName = 'NOMINAL'
         # Root color or standalone call that will keep drawing style
         self.style = None
-        self.path = None
-        
-        
+        self.listchanneldsid = []
+        self.listforgethisto = []
+        self.path = ''
     
-    def findFilesByPath(self, path = None):
+    def findFilesByPath(self, listchanneldsid, path):
+    
         self.path = path
-        self.listOfFiles = os.listdir(path)
+        self.listdsid = os.listdir(self.path)
+        self.listchanneldsid = listchanneldsid
+        print(listchanneldsid)
+        
+        for  channeldsid in self.listchanneldsid:
+            for dsid in self.listdsid:
+                if str(channeldsid) in dsid:
+                    self.listforgethisto.append(self.path +'/'+dsid)
     
     def getHistogram(self, var):
+    
         hClone = None
-        print(type(hClone))
-        k = 0
-        for file in self.listOfFiles:
+       
+        for dirpath in self.listforgethisto:
+            #print(dirpath)
+            k = 0
             if self.isData == False:
-                f = ROOT.TFile.Open(self.path +'/'+ str(file))
-                h_8bin = f.Get('h_metadata')
-                bin_8 = h_8bin.GetBinContent(8)
                 kf =  11.246151648051285
                 lumi2015 = 3219.56  # pb-1
+                bin_8 = 0 
+                
+               
+                for filename in os.listdir(dirpath):
+                    f = ROOT.TFile.Open(dirpath+'/'+ filename)
+                    h_8bin = f.Get('h_metadata')
+                    bin_8+= h_8bin.GetBinContent(8)
+                print(bin_8)
                         
-                df = ROOT.RDataFrame(self.treeName, self.path +'/'+ str(file))
-                weight = '(weight_mc*(cross_section*filter_efficiency*kfactor))*(((((((((NOMINAL_pileup_combined_weight)*(lep_0_NOMINAL_MuEffSF_TTVA))*(lep_0_NOMINAL_MuEffSF_IsoFCTight))*(jet_NOMINAL_global_effSF_MV2c10*jet_NOMINAL_global_ineffSF_MV2c10))*(jet_NOMINAL_central_jets_global_effSF_JVT*jet_NOMINAL_central_jets_global_ineffSF_JVT))*(lep_0_NOMINAL_MuEffSF_Reco_QualMedium))*(1))*((lep_0_NOMINAL_MuEffSF_HLT_mu20_iloose_L1MU15_OR_HLT_mu50_QualMedium_IsoNone)))*(jet_NOMINAL_forward_jets_global_effSF_JVT*jet_NOMINAL_forward_jets_global_ineffSF_JVT))'      
-               # oldweight = 'weight_mc*NOMINAL_pileup_combined_weight*cross_section*filter_efficiency*kfactor'
-                h = df.Define('v', var.command)                      
-                      .Define('w1', str(kf*lumi2015/bin_8))                     
+                df = ROOT.RDataFrame(self.treeName, dirpath+'/*.root')
+               # weight1 = '(weight_mc*(cross_section*filter_efficiency*kfactor))*((((((((((NOMINAL_pileup_random_run_number<284490)*NOMINAL_pileup_combined_weight)*(lep_0_NOMINAL_MuEffSF_TTVA))*(jet_NOMINAL_global_effSF_MV2c10*jet_NOMINAL_global_ineffSF_MV2c10))*(jet_NOMINAL_central_jets_global_effSF_JVT*jet_NOMINAL_central_jets_global_ineffSF_JVT))*(lep_0_NOMINAL_MuEffSF_Reco_QualMedium))*(lep_0_NOMINAL_MuEffSF_IsoFCLoose))*(1))*((NOMINAL_pileup_random_run_number<284490)*(lep_0_NOMINAL_MuEffSF_HLT_mu20_iloose_L1MU15_OR_HLT_mu50_QualMedium_IsoNone)+(NOMINAL_pileup_random_run_number>=284490)*(lep_0_NOMINAL_MuEffSF_HLT_mu26_ivarmedium_OR_HLT_mu50_QualMedium_IsoNone)))*(jet_NOMINAL_forward_jets_global_effSF_JVT*jet_NOMINAL_forward_jets_global_ineffSF_JVT))"
+                #weight = '(weight_mc*(cross_section*filter_efficiency*kfactor))*((((((((((1)*(lep_0_NOMINAL_MuEffSF_HLT_mu20_iloose_L1MU15_OR_HLT_mu50_QualMedium_IsoNone))*(lep_0_NOMINAL_MuEffSF_TTVA))*(lep_0_NOMINAL_MuEffSF_IsoFCTight))*(jet_NOMINAL_global_effSF_MV2c10*jet_NOMINAL_global_ineffSF_MV2c10))*((NOMINAL_pileup_random_run_number<284490)*NOMINAL_pileup_combined_weight))*(jet_NOMINAL_central_jets_global_effSF_JVT*jet_NOMINAL_central_jets_global_ineffSF_JVT))*(lep_0_NOMINAL_MuEffSF_Reco_QualMedium))*(1))*(jet_NOMINAL_forward_jets_global_effSF_JVT*jet_NOMINAL_forward_jets_global_ineffSF_JVT))'
+               # weight = 'weight_mc*cross_section*filter_efficiency*kfactor*NOMINAL_pileup_combined_weight*lep_0_NOMINAL_MuEffSF_TTVA*jet_NOMINAL_global_effSF_MV2c10*jet_NOMINAL_global_ineffSF_MV2c10*jet_NOMINAL_central_jets_global_effSF_JVT*jet_NOMINAL_central_jets_global_ineffSF_JVT*lep_0_NOMINAL_MuEffSF_Reco_QualMedium*lep_0_NOMINAL_MuEffSF_IsoFCLoose*lep_0_NOMINAL_MuEffSF_HLT_mu20_iloose_L1MU15_OR_HLT_mu50_QualMedium_IsoNone'
+                weight = '(weight_mc*(cross_section*filter_efficiency*kfactor))*(((((((((NOMINAL_pileup_combined_weight)*(lep_0_NOMINAL_MuEffSF_TTVA))*(lep_0_NOMINAL_MuEffSF_IsoFCTight))*(jet_NOMINAL_global_effSF_MV2c10*jet_NOMINAL_global_ineffSF_MV2c10))*(jet_NOMINAL_central_jets_global_effSF_JVT*jet_NOMINAL_central_jets_global_ineffSF_JVT))*(lep_0_NOMINAL_MuEffSF_Reco_QualMedium))*(1))*((lep_0_NOMINAL_MuEffSF_HLT_mu20_iloose_L1MU15_OR_HLT_mu50_QualMedium_IsoNone)))*(jet_NOMINAL_forward_jets_global_effSF_JVT*jet_NOMINAL_forward_jets_global_ineffSF_JVT))'
+                #weight = 'weight_mc*NOMINAL_pileup_combined_weight*cross_section*filter_efficiency*kfactor'
+                h = df.Filter('((HLT_mu20_iloose_L1MU15 && muTrigMatch_0_HLT_mu20_iloose_L1MU15)||(HLT_mu50 && muTrigMatch_0_HLT_mu50))>0')
+                      .Filter('NOMINAL_pileup_random_run_number<284485')
+                      .Filter('lep_0==1')
+                      .Filter('(n_electrons+n_muons)==1')
+                      .Filter('n_taus==0')
+                      .Filter('lep_0_id_tight==1')
+                      .Filter('lep_0_iso_FCTight==1')
+                      .Filter('lep_0_id_tight==1')
+                      .Filter('fabs(lep_0_p4_fast.Eta())<2.4')
+                      .Filter('lep_0_p4_fast.Pt()>27')
+                      .Filter('met_reco_p4_fast.Et()>25')
+                      .Filter('lepmet_mt>40')
+                      .Filter('(lep_0_iso_ptcone20_TightTTVA_pt1000/(lep_0_p4_fast.Pt()*1000))<0.06')
+                      .Define('v', var.command)
+                      .Define('w1', str(kf*lumi2015/bin_8))
                       .Define('w2', weight)
                       .Define('w', 'w1*w2')
                       .Histo1D(("%s"%(var.name), "%s"%(self.name), var.nbins, var.low, var.high), 'v', 'w')
-                #if 'dphi' in var.varname:
-                #    h = df.Define('v', 'if(fabs(lepmet_dphi) > 3.1415){ double_t dphi = 2*3.1415 - fabs(lepmet_dphi);}else{ double_t dphi  = lepmet_dphi;}return dphi;')
-                    
-                #else:
-                #h = df.Define('v', var.name)
-                
-                #h = df.Histo1D(("%s"%(var.name), "%s"%(self.name), var.nbins, var.low, var.high), 'v', 'w')
-                
             else:
-                df = ROOT.RDataFrame(self.treeName, self.path +'/'+ str(file))
-                h = df.Define('v', var.command)  
-                      .Histo1D(("%s"%(var.name), "%s"%(self.name), var.nbins, var.low, var.high),'v')
-                        
+                df = ROOT.RDataFrame(self.treeName, dirpath+'/*.root')
+                h = df.Filter('((HLT_mu20_iloose_L1MU15 && muTrigMatch_0_HLT_mu20_iloose_L1MU15)||(HLT_mu50 && muTrigMatch_0_HLT_mu50))>0')
+                      .Filter('run_number<284485')
+                      .Filter('lep_0==1')
+                      .Filter('(n_electrons+n_muons)==1')
+                      .Filter('n_taus==0')
+                      .Filter('lep_0_id_tight==1')
+                      .Filter('lep_0_iso_FCTight==1')
+                      .Filter('lep_0_id_tight==1')
+                      .Filter('fabs(lep_0_p4_fast.Eta())<2.4')
+                      .Filter('lep_0_p4_fast.Pt()>27')
+                      .Filter('met_reco_p4_fast.Et()>25')
+                      .Filter('lepmet_mt>40')
+                      .Filter('(lep_0_iso_ptcone20_TightTTVA_pt1000/(lep_0_p4_fast.Pt()*1000))<0.06')
+                      .Define('v', var.command)
+                      .Histo1D(("%s"%(var.name), "%s"%(self.name), var.nbins, var.low, var.high),'v')                   
             if k == 0:
                 hClone = h.Clone()
                 hClone.SetDirectory(0)
                 
                  
             else:
-                
                 hClone.Add(h.GetPtr())
-                print(hClone)
             k+=1
-        
         return hClone
+    
+    
 
 
-# In[189]:
-
-
-
-
-
-# In[208]:
+# In[42]:
 
 
 class Plotter:
@@ -126,7 +154,7 @@ class Plotter:
   
     
     def painter(self, h_data, h_mc_list):
-        print(type(h_mc_list[5]))
+        #print(type(h_mc_list[5]))
         k = 1
         while k < len(h_mc_list):
             h_sum_mc = h_mc_list[0].Clone()
@@ -158,7 +186,7 @@ class Plotter:
         pad2.SetBottomMargin(0.40)
         pad2.Draw()
         pad1.cd(0)
-        if 'lepmet_dphi' in h_mc_list[5].GetName():
+        if 'lepmet_dphi' in h_mc_list[0].GetName():
             pad1.SetLogy()
             self.minYaxispad1 = 1
             
@@ -210,13 +238,22 @@ class Plotter:
         h_data.Draw("E0  same ")
         pt.Draw("'NDC' same")
 
-        legend1 = ROOT.TLegend(0.70,0.88,0.52,0.60)
+        legend1 = ROOT.TLegend(0.70,0.88,0.52,0.7)
         legend1.SetLineColor(0)
         legend1.SetFillStyle(1)
+        legend2 = ROOT.TLegend(0.88,0.88,0.70,0.7)
+        legend2.SetLineColor(0)
+        legend2.SetFillStyle(1)
+        
         legend1.AddEntry( h_data ,"Data","lp")
-        for i in reversed(range(sizemclist)):
+        
+        for i in reversed(range(int(sizemclist/2),sizemclist)):
             legend1.AddEntry( h_mc_list[i], str(h_mc_list[i].GetTitle()),"f")
         legend1.Draw()
+        
+        for i in reversed(range(0,int(sizemclist/2))):
+            legend2.AddEntry( h_mc_list[i], str(h_mc_list[i].GetTitle()),"f")
+        legend2.Draw()
         
         
 
@@ -243,25 +280,25 @@ class Plotter:
         
         #h_ratio.GetYaxis().SetLabelFont(2)
         h_ratio.GetXaxis().SetLabelSize(0.07)
-        h_ratio.GetYaxis().SetTitle("#scale[2]{Data / Model  }")
+        h_ratio.GetYaxis().SetTitle("#scale[2.4]{Data / Model  }")
         h_ratio.GetXaxis().SetTitle("#scale[2.4]{%s}"%self.SetTitleX)
         h_ratio.GetXaxis().SetLabelOffset(0.01)
-        
+        h_ratio.GetYaxis().SetTitleOffset(1.4)
         #####################################
         h_ratio.GetXaxis().SetTitleOffset(2.4)
         #h_ratio.GetXaxis().SetTitleSize(0.1)
 
-        h_ratio.GetYaxis().SetRangeUser(self.minYaxispad2, self.maxYaxispad2)
+       
        # h_ratio.GetXaxis().SetRangeUser(40, 140)
         h_ratio.SetLineWidth(2)
         h_ratio.Draw("E")
         mcSumRatioHist.Draw(' E2 same')
         h_ratio.Draw("E same")
         gr1.Draw('same')
-
+        h_ratio.GetYaxis().SetRangeUser(self.minYaxispad2, self.maxYaxispad2)
         gPad.RedrawAxis()
 
-        legend1.AddEntry( mcSumRatioHist,"Stat.Uncert.","f")
+        legend2.AddEntry( mcSumRatioHist,"Stat.Uncert.","f")
 
        # c3.cd(1)
        # legend1.Draw('same')
@@ -273,6 +310,10 @@ class Plotter:
         c3.SaveAs('fff.pdf')
         c3.Draw()
         return c3
+
+
+# In[32]:
+
 
 dsidDict_v9 = {
     # PowhegPythia8EvtGen
@@ -288,45 +329,16 @@ dsidDict_v9 = {
     'Data': ['periodD','periodE','periodF','periodG','periodH','periodJ' ],
 }
 
-    
-#NEW FUNCTION 
-dirmc = '/eos/user/s/smwbr/dponomar/WTauData/v10s04/year15/filtered/SR/nom_mu'
-dirdata = '/eos/user/s/smwbr/dponomar/WTauData/v10s04/year15/filtered/SR/data_mu'
-listOfFilesmc = os.listdir(dirmc)
-listOfFilesdata = os.listdir(dirdata)
-def ghst(channel, var, dataset):
-    
-   
-    if 'Data' in str(channel):
-        listOfFiles=listOfFilesdata
-        dirname = dirdata
-    else:
-        listOfFiles=listOfFilesmc
-        dirname = dirmc
-        
-    dirlist = dsidDict_v9.get(channel)
-    k = 0
-    for dsid in dirlist:
-        for directory in listOfFiles:
-            if str(dsid) in directory:
-                dataset.findFilesByPath(dirname +'/'+directory)
-
-                h = dataset.getHistogram(var)
-                
-        if k == 0:
-            hClone = h.Clone()
-            hClone.SetDirectory(0)
-            k+=1
-            print(k)
-        else:
-            hClone.Add(h)
-        print(k)
-    return hClone 
 
 # In[ ]:
 
-zmumu = '/eos/user/s/smwbr/dponomar/WTauData/v10s04/year15/filtered/SR/nom_mu/user.dponomar.v10s04.mc16_13TeV.361107.PoPy8_Zmumu.M4.e3601_s3126_r9364_r9315_p3731.nom_mu_SM'
-ztt = '/eos/user/s/smwbr/dponomar/WTauData/v10s04/year15/filtered/SR/nom_mu/user.dponomar.v10s04.mc16_13TeV.361108.PoPy8_Ztt.M4.e3601_s3126_r9364_r9315_p3729.nom_mu_SM'
+
+
+
+
+# In[33]:
+
+
 
 Top = DataSet('Top')
 Diboson = DataSet('Diboson')
@@ -338,62 +350,19 @@ Ztt = DataSet('Z#rightarrow#tau#tau ')
 Data.isData = True
 
 
-
-Zmumu.findFilesByPath(zmumu)
-Ztt.findFilesByPath(ztt)
-
-var = Variable('lepmet_dphi', 16, 0, math.pi)
-
-
-h_data = ghst('Data',var,Data)
-h_top = ghst('Top',var,Top)
-h_diboson = ghst('Diboson',var,Diboson)
-h_wmu = ghst('Wmu',var,Wmu)
-h_tau = ghst('Wt',var,Tau)
-
-h_zmumu = Zmumu.getHistogram(var)
-h_ztt = Ztt.getHistogram(var)
-h_mc_list = [h_top, h_diboson, h_ztt, h_tau, h_zmumu, h_wmu]
-
-plotdphi = Plotter(1800000000, 0.5, 1.5)
-plotdphi.SetTitleX = 'd#phi(lep-MET)'
-plotdphi.SetTitleY = 'Evants/0.197'
-plotdphi.painter(h_data,h_mc_list)
+Top.findFilesByPath(dsidDict_v9.get('Top'),'/eos/user/s/smwbr/dponomar/WTauData/v10s04/year15/filtered/SR/nom_mu')
+Diboson.findFilesByPath(dsidDict_v9.get('Diboson'),'/eos/user/s/smwbr/dponomar/WTauData/v10s04/year15/filtered/SR/nom_mu')
+Wmu.findFilesByPath(dsidDict_v9.get('Wmu'),'/eos/user/s/smwbr/dponomar/WTauData/v10s04/year15/filtered/SR/nom_mu')
+Tau.findFilesByPath(dsidDict_v9.get('Wt'),'/eos/user/s/smwbr/dponomar/WTauData/v10s04/year15/filtered/SR/nom_mu')
+Data.findFilesByPath(dsidDict_v9.get('Data'),'/eos/user/s/smwbr/dponomar/WTauData/v10s04/year15/filtered/SR/data_mu')
+Zmumu.findFilesByPath(dsidDict_v9.get('DYmm'),'/eos/user/s/smwbr/dponomar/WTauData/v10s04/year15/filtered/SR/nom_mu')
+Ztt.findFilesByPath(dsidDict_v9.get('DYtt'),'/eos/user/s/smwbr/dponomar/WTauData/v10s04/year15/filtered/SR/nom_mu')
 
 
-
-dir_top = '/eos/user/g/gtolkach/NEWDATA/top'
-dir_diboson = '/eos/user/g/gtolkach/NEWDATA/diboson'
-dir_wmu = '/eos/user/g/gtolkach/NEWDATA/mu'
-dir_wtau = '/eos/user/g/gtolkach/NEWDATA/tau'
-data = '/eos/user/g/gtolkach/NEWDATA/Data'
-zmumu = '/eos/user/g/gtolkach/NEWDATA/Zmumu'
-ztt = '/eos/user/g/gtolkach/NEWDATA/Ztt'
-Top = DataSet('Top')
-
-Diboson = DataSet('Diboson')
-Wmu = DataSet('W#rightarrow#mu#nu')
-Tau = DataSet('W#rightarrow#tau#nu')
-Data = DataSet('data')
-Zmumu = DataSet('Z#rightarrow#mu#mu')
-Ztt = DataSet('Z#rightarrow#tau#tau ')
+# In[50]:
 
 
-Data.isData = True
-
-Top.findFilesByPath(dir_top)
-Diboson.findFilesByPath(dir_diboson)
-Wmu.findFilesByPath(dir_wmu)
-Tau.findFilesByPath(dir_wtau )
-Data.findFilesByPath(data)
-Zmumu.findFilesByPath(zmumu)
-Ztt.findFilesByPath(ztt)
-
-
-# In[ ]:
-
-
-var = Variable('lepmet_dphi', 16, 0, math.pi)
+var = Variable('lepmet_dphi', 12, 0, math.pi)
 h_top = Top.getHistogram(var)
 h_diboson = Diboson.getHistogram(var)
 h_wmu = Wmu.getHistogram(var)
@@ -404,29 +373,23 @@ h_ztt = Ztt.getHistogram(var)
 h_mc_list = [h_top, h_diboson, h_ztt, h_tau, h_zmumu, h_wmu]
 
 
-# In[211]:
+# In[52]:
 
 
 # maxYaxixpad1  minYaxixpad2 
-plotdphi = Plotter(1400000000, 0.6, 1.4)
+plotdphi = Plotter(1800000000, -2, 4)
 plotdphi.SetTitleX = 'd#phi(lep-MET)'
 plotdphi.SetTitleY = 'Evants/0.197'
 plotdphi.painter(h_data,h_mc_list)
 
 
-# In[203]:
+# In[53]:
 
 
+varPhi = Variable('met_reco_p4_fast.Phi()', 35, -math.pi, math.pi)
 
 
-
-# In[205]:
-
-
-varPhi = Variable('met_reco_p4_fast.Phi()', 30, -math.pi - 1, math.pi+1)
-
-
-# In[206]:
+# In[54]:
 
 
 h_top = Top.getHistogram(varPhi)
@@ -439,20 +402,53 @@ h_ztt = Ztt.getHistogram(varPhi)
 h_mc_list = [h_top, h_diboson, h_ztt, h_tau, h_zmumu, h_wmu]
 
 
-# In[217]:
+# In[64]:
 
 
 # maxYaxixpad1  minYaxixpad2 
-plotPhi = Plotter(1600000, 0.6, 1.4)
-plotPhi.SetTitleX = '#phi'
+plotPhi = Plotter(280000, 0.8, 1.2)
+plotPhi.minYaxispad1 = 130000
+plotPhi.SetTitleX = '#phi_{ MET}'
 plotPhi.SetTitleY = 'Evants'
 plotPhi.painter(h_data,h_mc_list)
 
 
-# In[218]:
+# In[65]:
 
 
-varEta = Variable('lep_0_p4_fast.Eta()', 30, -3, 3)
+varPhilep = Variable('lep_0_p4_fast.Phi()', 35, -math.pi, math.pi)
+
+
+# In[66]:
+
+
+h_top = Top.getHistogram(varPhilep)
+h_diboson = Diboson.getHistogram(varPhilep)
+h_wmu = Wmu.getHistogram(varPhilep)
+h_tau = Tau.getHistogram(varPhilep)
+h_data = Data.getHistogram(varPhilep)
+h_zmumu = Zmumu.getHistogram(varPhilep)
+h_ztt = Ztt.getHistogram(varPhilep)
+h_mc_list = [h_top, h_diboson, h_ztt, h_tau, h_zmumu, h_wmu]
+
+
+# In[77]:
+
+
+# maxYaxixpad1  minYaxixpad2 
+plotPhilep = Plotter(280000, 0.8, 1.2)
+plotPhilep.minYaxispad1 = 130000
+plotPhilep.SetTitleX = 'lep #phi'
+plotPhilep.SetTitleY = 'Evants'
+plotPhilep.painter(h_data,h_mc_list)
+
+
+# 
+
+# In[78]:
+
+
+varEta = Variable('lep_0_p4_fast.Eta()', 52, -2.43, 2.43)
 h_top = Top.getHistogram(varEta)
 h_diboson = Diboson.getHistogram(varEta)
 h_wmu = Wmu.getHistogram(varEta)
@@ -463,19 +459,19 @@ h_ztt = Ztt.getHistogram(varEta)
 h_mc_list = [h_top, h_diboson, h_ztt, h_tau, h_zmumu, h_wmu]
 
 
-# In[220]:
+# In[81]:
 
 
-plotEta = Plotter(1450000, 0.6, 1.4)
-plotEta.SetTitleX = '#eta'
+plotEta = Plotter(270000, 0.6, 1.4)
+plotEta.SetTitleX = 'lep #eta'
 plotEta.SetTitleY = 'Evants'
 plotEta.painter(h_data,h_mc_list)
 
 
-# In[226]:
+# In[82]:
 
 
-varMt = Variable('lepmet_mt', 30, 30, 150)
+varMt = Variable('lepmet_mt', 30, 40, 160)
 h_top = Top.getHistogram(varMt)
 h_diboson = Diboson.getHistogram(varMt)
 h_wmu = Wmu.getHistogram(varMt)
@@ -486,13 +482,101 @@ h_ztt = Ztt.getHistogram(varMt)
 h_mc_list = [h_top, h_diboson, h_ztt, h_tau, h_zmumu, h_wmu]
 
 
-# In[230]:
+# In[21]:
 
 
-plotMt = Plotter(3450000, 0.6, 1.4)
+h_top.Integral()
+
+
+# In[22]:
+
+
+h_diboson.Integral()
+
+
+# In[23]:
+
+
+h_wmu.Integral()
+
+
+# In[24]:
+
+
+h_tau.Integral()
+
+
+# In[25]:
+
+
+h_data.Integral()
+
+
+# In[26]:
+
+
+h_zmumu.Integral()
+
+
+# In[27]:
+
+
+h_ztt.Integral()
+
+
+# In[87]:
+
+
+plotMt = Plotter(1500000, 0.2, 1.8)
 plotMt.SetTitleX = 'M_{T}[GeV]'
 plotMt.SetTitleY = 'Evants/2GeV'
 plotMt.painter(h_data,h_mc_list)
+
+
+# In[88]:
+
+
+varPt = Variable('lep_0_p4_fast.Pt()', 35, 20, 100)
+h_top = Top.getHistogram(varPt)
+h_diboson = Diboson.getHistogram(varPt)
+h_wmu = Wmu.getHistogram(varPt)
+h_tau = Tau.getHistogram(varPt)
+h_data = Data.getHistogram(varPt)
+h_zmumu = Zmumu.getHistogram(varPt)
+h_ztt = Ztt.getHistogram(varPt)
+h_mc_list = [h_top, h_diboson, h_ztt, h_tau, h_zmumu, h_wmu]
+
+
+# In[92]:
+
+
+plotPt = Plotter(1600000, 0.6, 1.4)
+plotPt.SetTitleX = 'P_{T}[GeV]'
+plotPt.SetTitleY = 'Evants/2GeV'
+plotPt.painter(h_data,h_mc_list)
+
+
+# In[93]:
+
+
+varE = Variable('met_reco_p4_fast.E()', 40, 20, 110)
+h_top = Top.getHistogram(varE)
+h_diboson = Diboson.getHistogram(varE)
+h_wmu = Wmu.getHistogram(varE)
+h_tau = Tau.getHistogram(varE)
+h_data = Data.getHistogram(varE)
+h_zmumu = Zmumu.getHistogram(varE)
+h_ztt = Ztt.getHistogram(varE)
+h_mc_list = [h_top, h_diboson, h_ztt, h_tau, h_zmumu, h_wmu]
+
+
+# In[97]:
+
+
+plotE = Plotter(1250000, 0.6, 1.4)
+plotE.SetTitleX = 'E_{MET}[GeV]'
+plotE.SetTitleY = 'Evants/2GeV'
+plotE.painter(h_data,h_mc_list)
 
 
 # In[ ]:
