@@ -68,10 +68,10 @@ class DataSet:
     def getHistogram(self, var):
     
         hClone = None
-       
+        k = 0
         for dirpath in self.listforgethisto:
             #print(dirpath)
-            k = 0
+            
             if self.isData == False:
                 kf =  11.246151648051285
                 lumi2015 = 3219.56  # pb-1
