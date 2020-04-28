@@ -136,7 +136,7 @@ def rew(filename, tp):
             PhiMiss[0] = tree.met_reco_p4.Phi()
             
             l = reader.EvaluateMVA("MLP")
-            #weight = tree.weight_mc*tree.cross_section*tree.filter_efficiency*tree.kfactor*tree.NOMINAL_pileup_combined_weight*tree.lep_0_NOMINAL_MuEffSF_TTVA*tree.jet_NOMINAL_global_effSF_MV2c10*tree.jet_NOMINAL_global_ineffSF_MV2c10*tree.jet_NOMINAL_central_jets_global_effSF_JVT*tree.jet_NOMINAL_central_jets_global_ineffSF_JVT*tree.lep_0_NOMINAL_MuEffSF_Reco_QualMedium*tree.lep_0_NOMINAL_MuEffSF_IsoFCLoose*tree.lep_0_NOMINAL_MuEffSF_HLT_mu20_iloose_L1MU15_OR_HLT_mu50_QualMedium_IsoNone*tree.jet_NOMINAL_forward_jets_global_effSF_JVT*tree.jet_NOMINAL_forward_jets_global_ineffSF_JVT*kfactor*lumi2015/bin_8
+           
             weight = (tree.weight_mc*(tree.cross_section*tree.filter_efficiency*tree.kfactor))*(((((((((tree.NOMINAL_pileup_combined_weight)*(tree.lep_0_NOMINAL_MuEffSF_TTVA))*(tree.lep_0_NOMINAL_MuEffSF_IsoFCTight))*(tree.jet_NOMINAL_global_effSF_MV2c10*tree.jet_NOMINAL_global_ineffSF_MV2c10))*(tree.jet_NOMINAL_central_jets_global_effSF_JVT*tree.jet_NOMINAL_central_jets_global_ineffSF_JVT))*(tree.lep_0_NOMINAL_MuEffSF_Reco_QualMedium))*(1))*((tree.lep_0_NOMINAL_MuEffSF_HLT_mu20_iloose_L1MU15_OR_HLT_mu50_QualMedium_IsoNone)))*(tree.jet_NOMINAL_forward_jets_global_effSF_JVT*tree.jet_NOMINAL_forward_jets_global_ineffSF_JVT))*kfactor*lumi2015/bin_8
             #weight1 = tree.weight_mc*tree.NOMINAL_pileup_combined_weight*tree.cross_section*tree.filter_efficiency*kfactor*lumi2015/bin_8
             h.Fill(l,weight)
