@@ -356,7 +356,7 @@ h_ztt = rew(Ztt, 'ss')
 
 
 from ROOT import gPad
-h_mc = [h_top, h_diboson, h_ztt, h_zmumu, h_wtau , h_wmu]
+h_mc = [h_top, h_diboson, h_ztt,h_wtau , h_zmumu , h_wmu]
 
 k = 1
 while k < len(h_mc):
@@ -454,8 +454,8 @@ legend1.SetLineColor(0)
 legend1.SetFillStyle(1)
 legend1.AddEntry( h_data,"Data","lp")
 legend1.AddEntry( h_mc[5],"W#rightarrow#mu#nu ","f")
-legend1.AddEntry( h_mc[4],"W#rightarrow#tau#nu ","f")
-legend1.AddEntry( h_mc[3],"Z#rightarrow#mu#mu","f")
+legend1.AddEntry( h_mc[4],"Z#rightarrow#mu#mu","f")
+legend1.AddEntry( h_mc[3],"W#rightarrow#tau#nu ","f")
 legend1.AddEntry( h_mc[2],"Z#rightarrow#tau#tau ","f")
 legend1.AddEntry( h_mc[1],"Diboson","f")
 legend1.AddEntry( h_mc[0],"Top","f")
