@@ -285,7 +285,7 @@ h_wmu.Add(h_wmu2)
 
 h_wtau1 = rew(dir_wtau1, 'top')
 h_wtau2 = rew(dir_wtau2, 'top')
-h_wtau = h_wmu1.Clone()
+h_wtau = h_wtau1.Clone()
 h_wtau.Add(h_wtau2)
 
 
