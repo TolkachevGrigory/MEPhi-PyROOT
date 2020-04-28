@@ -362,7 +362,7 @@ Ztt.findFilesByPath(dsidDict_v9.get('DYtt'),'/eos/user/s/smwbr/dponomar/WTauData
 # In[50]:
 
 
-var = Variable('lepmet_dphi', 12, 0, math.pi)
+var = Variable('lepmet_dphi', 16, 0, math.pi)
 h_top = Top.getHistogram(var)
 h_diboson = Diboson.getHistogram(var)
 h_wmu = Wmu.getHistogram(var)
@@ -373,23 +373,23 @@ h_ztt = Ztt.getHistogram(var)
 h_mc_list = [h_top, h_diboson, h_ztt, h_tau, h_zmumu, h_wmu]
 
 
-# In[52]:
+# In[98]:
 
 
 # maxYaxixpad1  minYaxixpad2 
-plotdphi = Plotter(1800000000, -2, 4)
+plotdphi = Plotter(1800000000, 0.3, 1.7)
 plotdphi.SetTitleX = 'd#phi(lep-MET)'
 plotdphi.SetTitleY = 'Evants/0.197'
 plotdphi.painter(h_data,h_mc_list)
 
 
-# In[53]:
+# In[99]:
 
 
-varPhi = Variable('met_reco_p4_fast.Phi()', 35, -math.pi, math.pi)
+varPhi = Variable('met_reco_p4_fast.Phi()', 32, -math.pi, math.pi)
 
 
-# In[54]:
+# In[100]:
 
 
 h_top = Top.getHistogram(varPhi)
@@ -402,24 +402,24 @@ h_ztt = Ztt.getHistogram(varPhi)
 h_mc_list = [h_top, h_diboson, h_ztt, h_tau, h_zmumu, h_wmu]
 
 
-# In[64]:
+# In[109]:
 
 
 # maxYaxixpad1  minYaxixpad2 
-plotPhi = Plotter(280000, 0.8, 1.2)
+plotPhi = Plotter(770000, 0.8, 1.2)
 plotPhi.minYaxispad1 = 130000
 plotPhi.SetTitleX = '#phi_{ MET}'
-plotPhi.SetTitleY = 'Evants'
+plotPhi.SetTitleY = 'Evants/0.197'
 plotPhi.painter(h_data,h_mc_list)
 
 
-# In[65]:
+# In[110]:
 
 
-varPhilep = Variable('lep_0_p4_fast.Phi()', 35, -math.pi, math.pi)
+varPhilep = Variable('lep_0_p4_fast.Phi()', 32, -math.pi, math.pi)
 
 
-# In[66]:
+# In[111]:
 
 
 h_top = Top.getHistogram(varPhilep)
@@ -432,23 +432,23 @@ h_ztt = Ztt.getHistogram(varPhilep)
 h_mc_list = [h_top, h_diboson, h_ztt, h_tau, h_zmumu, h_wmu]
 
 
-# In[77]:
+# In[119]:
 
 
 # maxYaxixpad1  minYaxixpad2 
-plotPhilep = Plotter(280000, 0.8, 1.2)
+plotPhilep = Plotter(790000, 0.8, 1.2)
 plotPhilep.minYaxispad1 = 130000
 plotPhilep.SetTitleX = 'lep #phi'
-plotPhilep.SetTitleY = 'Evants'
+plotPhilep.SetTitleY = 'Evants/0.197'
 plotPhilep.painter(h_data,h_mc_list)
 
 
 # 
 
-# In[78]:
+# In[120]:
 
 
-varEta = Variable('lep_0_p4_fast.Eta()', 52, -2.43, 2.43)
+varEta = Variable('lep_0_p4_fast.Eta()', 30, -2.5, 2.5)
 h_top = Top.getHistogram(varEta)
 h_diboson = Diboson.getHistogram(varEta)
 h_wmu = Wmu.getHistogram(varEta)
@@ -459,19 +459,19 @@ h_ztt = Ztt.getHistogram(varEta)
 h_mc_list = [h_top, h_diboson, h_ztt, h_tau, h_zmumu, h_wmu]
 
 
-# In[81]:
+# In[125]:
 
 
-plotEta = Plotter(270000, 0.6, 1.4)
+plotEta = Plotter(1000000, 0.6, 1.4)
 plotEta.SetTitleX = 'lep #eta'
-plotEta.SetTitleY = 'Evants'
+plotEta.SetTitleY = 'Evants/0.167'
 plotEta.painter(h_data,h_mc_list)
 
 
-# In[82]:
+# In[79]:
 
 
-varMt = Variable('lepmet_mt', 30, 40, 160)
+varMt = Variable('lepmet_mt', 60, 40, 160)
 h_top = Top.getHistogram(varMt)
 h_diboson = Diboson.getHistogram(varMt)
 h_wmu = Wmu.getHistogram(varMt)
@@ -482,61 +482,61 @@ h_ztt = Ztt.getHistogram(varMt)
 h_mc_list = [h_top, h_diboson, h_ztt, h_tau, h_zmumu, h_wmu]
 
 
-# In[21]:
+# In[80]:
 
 
 h_top.Integral()
 
 
-# In[22]:
+# In[81]:
 
 
 h_diboson.Integral()
 
 
-# In[23]:
+# In[82]:
 
 
 h_wmu.Integral()
 
 
-# In[24]:
+# In[83]:
 
 
 h_tau.Integral()
 
 
-# In[25]:
+# In[84]:
 
 
 h_data.Integral()
 
 
-# In[26]:
+# In[85]:
 
 
 h_zmumu.Integral()
 
 
-# In[27]:
+# In[86]:
 
 
 h_ztt.Integral()
 
 
-# In[87]:
+# In[94]:
 
 
-plotMt = Plotter(1500000, 0.2, 1.8)
-plotMt.SetTitleX = 'M_{T}[GeV]'
-plotMt.SetTitleY = 'Evants/2GeV'
-plotMt.painter(h_data,h_mc_list)
+plotM2 = Plotter(1700000, 0.2, 1.8)
+plotM2.SetTitleX = 'M_{T}[GeV]'
+plotM2.SetTitleY = 'Evants/2GeV'
+plotM2.painter(h_data,h_mc_list)
 
 
-# In[88]:
+# In[126]:
 
 
-varPt = Variable('lep_0_p4_fast.Pt()', 35, 20, 100)
+varPt = Variable('lep_0_p4_fast.Pt()', 40, 20, 100)
 h_top = Top.getHistogram(varPt)
 h_diboson = Diboson.getHistogram(varPt)
 h_wmu = Wmu.getHistogram(varPt)
@@ -547,19 +547,19 @@ h_ztt = Ztt.getHistogram(varPt)
 h_mc_list = [h_top, h_diboson, h_ztt, h_tau, h_zmumu, h_wmu]
 
 
-# In[92]:
+# In[132]:
 
 
-plotPt = Plotter(1600000, 0.6, 1.4)
+plotPt = Plotter(2850000, 0.6, 1.4)
 plotPt.SetTitleX = 'P_{T}[GeV]'
 plotPt.SetTitleY = 'Evants/2GeV'
 plotPt.painter(h_data,h_mc_list)
 
 
-# In[93]:
+# In[133]:
 
 
-varE = Variable('met_reco_p4_fast.E()', 40, 20, 110)
+varE = Variable('met_reco_p4_fast.E()', 45, 20, 110)
 h_top = Top.getHistogram(varE)
 h_diboson = Diboson.getHistogram(varE)
 h_wmu = Wmu.getHistogram(varE)
@@ -570,10 +570,10 @@ h_ztt = Ztt.getHistogram(varE)
 h_mc_list = [h_top, h_diboson, h_ztt, h_tau, h_zmumu, h_wmu]
 
 
-# In[97]:
+# In[137]:
 
 
-plotE = Plotter(1250000, 0.6, 1.4)
+plotE = Plotter(2450000, 0.6, 1.4)
 plotE.SetTitleX = 'E_{MET}[GeV]'
 plotE.SetTitleY = 'Evants/2GeV'
 plotE.painter(h_data,h_mc_list)
