@@ -19,13 +19,13 @@ class Particle:
             return random.choices(['K+->mu+nu_mu', 'K+->pi0+e+nu_e','K+->pi0+mu+nu_mu', 'K+->pi_minus+pi_plus+e+nu_e','Другое'], weights=[63,5,3,4.5,24.5])[0]
         
     def particlesdecay(self, number):
-        dictonary = {} 
+        dictionary = {} 
         for i in range(number):
             mode = self.decay()
-            dictonary[mode] = dictonary.get(mode,0)+1
+            dictionary[mode] = dictionary.get(mode,0)+1
     
         for mode in dictonary:
-            print( mode,': ' + str(dictonary[mode]))
+            print( mode,': ' + str(dictionary[mode]))
 
 
 # In[49]:
