@@ -24,7 +24,7 @@ class Particle:
             mode = self.decay()
             dictionary[mode] = dictionary.get(mode,0)+1
     
-        for mode in dictonary:
+        for mode in dictionary:
             print( mode,': ' + str(dictionary[mode]))
 
 
